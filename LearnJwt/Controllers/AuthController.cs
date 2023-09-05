@@ -47,7 +47,7 @@ namespace LearnJwt.Controllers
         }
 
         [HttpPost("Login")]
-        public async Task<ActionResult<string>> Login(UserDTO request)
+        public async Task<ActionResult<object>> Login(UserDTO request)
         {
             if (user.Username != request.Username)
             {
@@ -64,7 +64,7 @@ namespace LearnJwt.Controllers
             var refreshToken = GenerateRefreshToken();
             SetRefreshToken(refreshToken);
 
-            return Ok(token);
+            return Ok(new { user.Username, token});
         }
 
         [HttpPost("refresh-token")]
@@ -123,7 +123,7 @@ namespace LearnJwt.Controllers
             };
 
             var key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(
-                _configuration.GetSection("AppSettings:Token").Value));
+                _configuration.GetSection("AppSettings:AccessTokenSecret").Value));
             Console.WriteLine(key);
 
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
